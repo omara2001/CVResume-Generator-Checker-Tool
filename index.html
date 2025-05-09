@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart CV Generator & Checker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-file-alt"></i> Smart CV Generator & Checker</h1>
+            <p>Create professional CVs and analyze existing ones with AI</p>
+        </div>
+
+        <div class="tabs">
+            <button type="button" class="tab-button active" data-tab="generate">
+                <i class="fas fa-magic"></i> Generate CV
+            </button>
+            <button type="button" class="tab-button" data-tab="check">
+                <i class="fas fa-check-circle"></i> Check CV
+            </button>
+        </div>
+
+        <!-- Generate CV Tab -->
+        <div id="generate-tab" class="tab-content active">
+            <div class="form-section">
+                <h2>Generate Professional CV</h2>
+
+                <div class="error-message" id="generate-error"></div>
+                <div class="success-message" id="generate-success"></div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" placeholder="Software Engineer" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" placeholder="+1 234 567 8900" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="skills">Skills</label>
+                    <div class="skills-container" id="skillsContainer"></div>
+                    <input type="text" id="skillInput" placeholder="Type a skill and press Enter">
+                    <div class="skills-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <p><strong>How to add skills:</strong></p>
+                            <p>1. Type a skill and press Enter to add it</p>
+                            <p>2. Or type multiple skills separated by commas</p>
+                            <p>3. Added skills will appear as tags above</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Experience</label>
+                    <div id="experienceContainer"></div>
+                    <button type="button" class="add-btn" onclick="addExperience()">
+                        <i class="fas fa-plus"></i> Add Experience
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>Education</label>
+                    <div id="educationContainer"></div>
+                    <button type="button" class="add-btn" onclick="addEducation()">
+                        <i class="fas fa-plus"></i> Add Education
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalInfo">Additional Information (Optional)</label>
+                    <textarea id="additionalInfo" placeholder="Any additional information you'd like to include..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="cvStyle">CV Style</label>
+                    <select id="cvStyle">
+                        <option value="professional">Professional</option>
+                        <option value="modern">Modern</option>
+                        <option value="creative">Creative</option>
+                    </select>
+                </div>
+
+                <button type="button" class="submit-btn" onclick="generateCV()">
+                    <i class="fas fa-file-export"></i> Generate CV
+                </button>
+
+                <div class="loading" id="generateLoading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Generating your professional CV...</p>
+                </div>
+            </div>
+
+            <div class="results-section" id="generateResults">
+                <h2>Your CV is Ready!</h2>
+                <div class="form-group">
+                    <label>Professional Summary</label>
+                    <div class="summary-preview" id="generatedSummary"></div>
+                </div>
+                <div class="download-buttons">
+                    <button type="button" class="download-btn" onclick="downloadCV('pdf')">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                    <button type="button" class="download-btn" onclick="downloadCV('docx')">
+                        <i class="fas fa-file-word"></i> Download DOCX
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Check CV Tab -->
+        <div id="check-tab" class="tab-content">
+            <div class="form-section">
+                <h2>Check Your CV</h2>
+
+                <div class="error-message" id="check-error"></div>
+                <div class="success-message" id="check-success"></div>
+
+                <div class="form-group">
+                    <label>Upload CV or Paste Text</label>
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <p>Drag and drop your CV here or click to upload</p>
+                        <p class="file-formats-note">Supported formats: PDF, DOCX, TXT</p>
+                    </div>
+                    <input type="file" id="fileInput" class="hidden-input" accept=".pdf,.docx,.txt" aria-label="Upload CV file" title="Upload CV file">
+                </div>
+
+                <div class="form-group">
+                    <label for="cvText">Or Paste Your CV Text</label>
+                    <textarea id="cvText" rows="10" placeholder="Paste your CV content here..."></textarea>
+                    <div class="cv-format-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <p><strong>Supported formats:</strong></p>
+                            <p>1. Plain text CV content</p>
+                            <p>2. JSON format with "cv_text" property</p>
+                            <p>3. Any text extracted from PDF or DOCX files</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="targetJob">Target Job (Optional)</label>
+                    <input type="text" id="targetJob" placeholder="e.g., Software Engineer at Google">
+                </div>
+
+                <button type="button" class="submit-btn" onclick="checkCV()">
+                    <i class="fas fa-search"></i> Analyze CV
+                </button>
+
+                <div class="loading" id="checkLoading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Analyzing your CV...</p>
+                </div>
+            </div>
+
+            <div class="results-section" id="checkResults">
+                <h2>CV Analysis Results</h2>
+
+                <div class="score-card">
+                    <div class="score-item">
+                        <span class="score-value" id="overallScore">0</span>
+                        <span class="score-label">Overall Score</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-value" id="atsScore">0</span>
+                        <span class="score-label">ATS Score</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Strengths</label>
+                    <ul class="suggestions-list" id="strengthsList"></ul>
+                </div>
+
+                <div class="form-group">
+                    <label>Suggestions for Improvement</label>
+                    <ul class="suggestions-list" id="suggestionsList"></ul>
+                </div>
+
+                <div class="form-group">
+                    <label>Missing Keywords</label>
+                    <div class="skills-container" id="keywordsList"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Areas to Improve</label>
+                    <ul class="suggestions-list" id="weaknessesList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
