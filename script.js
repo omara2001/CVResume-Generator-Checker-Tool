@@ -1,5 +1,5 @@
 // Railway backend URL - ensure no trailing slash
-const API_URL = 'https://web-production-04a6f.up.railway.app';
+const API_URL = 'https://cvresume-generator-checker-endpoints-production.up.railway.app/';
 let skills = [];
 let experiences = [];
 let education = [];
